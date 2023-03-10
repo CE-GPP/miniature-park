@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Map of Olympic Park in London</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
+    <script src="scripts/santanderBikes.js"></script>
+    <script src="scripts/shadows.js"></script>
+    <script src="https://unpkg.com/mapbox-gl-shadow-simulator/dist/mapbox-gl-shadow-simulator.umd.min.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <style>
+      .marker {
+        display: block;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        padding: 0;
+      }
+    </style>
+
+    <script>
+      mapboxgl.accessToken =
+        "pk.eyJ1Ijoid2V6cGV6IiwiYSI6ImNsZGl2b2t0NjB0a2czdmwxbGZoNDV6ZGEifQ.QC9rt5n-bnHCZp5elt24pg";
+      const map = new mapboxgl.Map({
+        container: "map", // container ID
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: "mapbox://styles/mapbox/streets-v12", // style URL
+        center: [-0.016124, 51.542745], // starting position [lng, lat]
+        zoom: 14, // starting zoom
+      });
+
+      map.on("style.load", () => {
+        // Insert the layer beneath any symbol layer.
+        const layers = map.getStyle().layers;
+        const labelLayerId = layers.find(
+          (layer) => layer.type === "symbol" && layer.layout["text-field"]
+        ).id;
+
+        // The 'building' layer in the Mapbox Streets
+        // vector tileset contains building height data
+        // from OpenStreetMap.
+        map.addLayer(
+          {
+            id: "add-3d-buildings",
+            source: "composite",
+            "source-layer": "building",
+            filter: ["==", "extrude", "true"],
+            type: "fill-extrusion",
+            minzoom: 15,
+            paint: {
+              "fill-extrusion-color": "#aaa",
+
+              // Use an 'interpolate' expression to
+              // add a smooth transition effect to
+              // the buildings as the user zooms in.
+              "fill-extrusion-height": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                15,
+                0,
+                15.05,
+                ["get", "height"],
+              ],
+              "fill-extrusion-base": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                15,
+                0,
+                15.05,
+                ["get", "min_height"],
+              ],
+              "fill-extrusion-opacity": 0.6,
+            },
+          },
+          labelLayerId
+        );
+
+        const shadeMap = new ShadeMap({
+            date: new Date(),    // display shadows for current date
+            color: '#01112f',    // shade color
+            opacity: 0.7,        // opacity of shade color
+            apiKey: "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImRvbmd5b3VuZy5saW0uMjJAdWNsLmFjLnVrIiwiY3JlYXRlZCI6MTY3NzUwNDk1Mjc3NCwiaWF0IjoxNjc3NTA0OTUyfQ.8sxIY7MfKPrgfrTI_UMb4q07ofbT6yvLrOyGVro940o",
+            terrainSource: {
+              tileSize: 256,       // DEM tile size
+              maxZoom: 15,         // Maximum zoom of DEM tile set
+              getSourceUrl: ({ x, y, z }) => {
+                // return DEM tile url for given x,y,z coordinates
+                console.log(`https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`)
+                return `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`
+              },
+              getElevation: ({ r, g, b, a }) => {
+                // return elevation in meters for a given DEM tile pixel
+                return (r * 256 + g + b / 256) - 32768
+              }
+            },
+            debug: (msg) => { console.log(new Date().toISOString(), msg) },
+          }).addTo(map);
+            
+        
+          // advance shade by 1 hour
+          shadeMap.setDate(new Date(Date.now() + 1000 * 60 * 60)); 
+        
+          // sometime later
+          // ...remove layer
+          //shadeMap.remove();
+      });
+
+      loadBikes();
+      //renderShadows();
+    </script>
+  </body>
+</html>
