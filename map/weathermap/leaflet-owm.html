@@ -8,6 +8,13 @@
             height: 100%;
             margin: 0px;
         }
+        #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -24,6 +31,7 @@
     <script src="leaflet-src.js"></script>
     <script src="js/leaflet-owm.js"></script>
     <script src="js/iconLayer.js"></script>
+ 
     <script>
         var providers = {};
 
@@ -36,23 +44,21 @@
             })
         };
 
-        providers['Satellite'] = {
-            title: 'MODIS',
-            icon: 'img/layers-satellite.png',
-            layer: L.tileLayer('http://{s}.sat.owm.io/sql/{z}/{x}/{y}?select=b1,b4,b3&from=modis&order=last&color=modis&appid=538514057e43e4001d09e509c2d820fb', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="http://owm.io">VANE</a>'
-            })
-        };
+        // providers['Satellite'] = {
+        //     title: 'MODIS',
+        //     icon: 'img/layers-satellite.png',
+        //     layer: L.tileLayer('http://{s}.sat.owm.io/sql/{z}/{x}/{y}?select=b1,b4,b3&from=modis&order=last&color=modis&appid=538514057e43e4001d09e509c2d820fb', {
+        //         maxZoom: 19,
+        //         attribution: '&copy; <a href="http://owm.io">VANE</a>'
+        //     })
+        // };
 
 
     </script>
     <script>
         var map = L.map('map').setView([51.5442, 0.0159], 14);
 
-        //https://tile.openweathermap.org/map/{layer}/{z}/{x}/{y}.png?appid={API key}
-        //http://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=d9cfe451d5a775abaf178aec4951b4b0
-        
+       
 
         var Temp = L.tileLayer('https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=538514057e43e4001d09e509c2d820fb', {
             maxZoom: 18,
@@ -97,6 +103,89 @@
         L.control.iconLayers(layers).addTo(map);
     </script>
 
+<div id="viewDiv">
+    <div class="leaflet-bottom leaflet-right">
+      <div class="leaflet-control-color-scale leaflet-control" style="display: block; background: none; box-shadow: none; border-width: 0px;">
+        <div class="leaflet-control-color-scale-line" style="width: 300px; background-image: none; position: relative; bottom: 129px; right: -15px; border-width: 0px;">
+          <div class="leaflet-control-color-scale leaflet-control" style="display: block; width: 360px;">
+            <div class="scale-value" style="margin-left: 10px;border:0"><span>Temp</span></div>
+            <div class="leaflet-control-color-scale-line" style="background-image: linear-gradient(to right, rgb(130, 87, 219) 0%, rgb(32, 140, 236) 12.5%, rgb(32, 196, 232) 25%, rgb(35, 221, 221) 37.5%, rgb(194, 255, 40) 50%, rgb(255, 240, 40) 62.5%, rgb(255, 194, 40) 75%, rgb(252, 128, 20) 87.5%, rgb(244, 76, 73) 100%); width: 300px; float: right;">
+              <div class="scale-value scale-min-value"><span> -30 °C </span></div>
+              <div class="scale-value scale-avg-value" style="left:50%"><span> 0 °C </span></div>
+              <div class="scale-value scale-max-value"><span> 30 °C </span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <div id="viewDiv">
+    <div class="leaflet-bottom leaflet-right">
+      <div class="leaflet-control-color-scale leaflet-control" style="display: block; background: none; box-shadow: none; border-width: 0px;">
+        <div class="leaflet-control-color-scale-line" style="width: 300px; background-image: none; position: relative; bottom: 103px; right: -15px; border-width: 0px;">
+          <div class="leaflet-control-color-scale leaflet-control" style="display: block; width: 360px;">
+            <div class="scale-value" style="margin-left: 10px;border:0"><span>Precip</span></div>
+            <div class="leaflet-control-color-scale-line" style="background-image: linear-gradient(to right, rgb(225, 200, 100, 0) 0%, rgb(200, 150, 150, 0) 1%, rgb(150, 150, 170, 0) 3%, rgb(120, 120, 190, 0) 6%, rgb(110, 110, 205, 0.3) 20%, rgb(80,80, 225, 0.7) 50%, rgb(20, 20, 255, 0.9) 100%); width: 300px; float: right;">
+              <div class="scale-value scale-min-value"><span> 0 mm </span></div>
+              <div class="scale-value scale-avg-value" style="left:50%"><span> 20 mm </span></div>
+              <div class="scale-value scale-max-value"><span> 140 mm </span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="viewDiv">
+    <div class="leaflet-bottom leaflet-right">
+      <div class="leaflet-control-color-scale leaflet-control" style="display: block; background: none; box-shadow: none; border-width: 0px;">
+        <div class="leaflet-control-color-scale-line" style="width: 300px; background-image: none; position: relative; bottom: 77px; right: -15px; border-width: 0px;">
+          <div class="leaflet-control-color-scale leaflet-control" style="display: block; width: 360px;">
+            <div class="scale-value" style="margin-left: 10px;border:0"><span>cloud</span></div>
+            <div class="leaflet-control-color-scale-line" style="background-image: linear-gradient(to right, rgb(255, 255, 255, 0.0) 0%, rgb(252, 251, 255, 0.2) 20%, rgb(249, 248, 255, 0.4) 40%, rgb(246, 245, 255, 0.75) 60%, rgb(243, 242, 255, 1) 80%, rgb(240, 240, 255, 1) 100%); width: 300px; float: right;">
+              <div class="scale-value scale-min-value"><span> 0 % </span></div>
+              <div class="scale-value scale-avg-value" style="left:50%"><span> 50 % </span></div>
+              <div class="scale-value scale-max-value"><span> 100 % </span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="viewDiv">
+    <div class="leaflet-bottom leaflet-right">
+      <div class="leaflet-control-color-scale leaflet-control" style="display: block; background: none; box-shadow: none; border-width: 0px;">
+        <div class="leaflet-control-color-scale-line" style="width: 300px; background-image: none; position: relative; bottom: 51px; right: -15px; border-width: 0px;">
+          <div class="leaflet-control-color-scale leaflet-control" style="display: block; width: 360px;">
+            <div class="scale-value" style="margin-left: 10px;border:0"><span>Pressure</span></div>
+            <div class="leaflet-control-color-scale-line" style="background-image: linear-gradient(to right, rgb(0,115,255,1) 0%, rgb(0,170,255,1) 12.5%, rgb(75,208,214,1) 25%, rgb(141,231,199,1) 37.5%, rgb(176,247,32,1) 50%, rgb(240,184,0,1) 62.5%, rgb(251,85,21,1) 75%, rgb(243,54,59,1) 87.5%, rgb(198,0,0,1) 100%); width: 300px; float: right;">
+              <div class="scale-value scale-min-value"><span> 94000 Pa </span></div>
+              <div class="scale-value scale-avg-value" style="left:50%"><span> 101000 Pa </span></div>
+              <div class="scale-value scale-max-value"><span> 108000 Pa </span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="viewDiv">
+    <div class="leaflet-bottom leaflet-right">
+      <div class="leaflet-control-color-scale leaflet-control" style="display: block; background: none; box-shadow: none; border-width: 0px;">
+        <div class="leaflet-control-color-scale-line" style="width: 300px; background-image: none; position: relative; bottom: 25px; right: -15px; border-width: 0px;">
+          <div class="leaflet-control-color-scale leaflet-control" style="display: block; width: 360px;">
+            <div class="scale-value" style="margin-left: 10px;border:0"><span>Wind</span></div>
+            <div class="leaflet-control-color-scale-line" style="background-image: linear-gradient(to right, rgb(255,255,255, 0) 0%, rgb(238,206,206, 0.4) 12.5%, rgb(179,100,188, 0.7) 25%, rgb(179,100,188, 0.7) 37.5%, rgb(63,33,59, 0.8) 50%, rgb(116,76,172, 0.9) 62.5%, rgb(70,0,175,1) 75%, rgb(13,17,38,1) 100%); width: 300px; float: right;">
+              <div class="scale-value scale-min-value"><span> 1 m/s </span></div>
+              <div class="scale-value scale-avg-value" style="left:50%"><span> 20 m/s </span></div>
+              <div class="scale-value scale-max-value"><span> 200 m/s </span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
