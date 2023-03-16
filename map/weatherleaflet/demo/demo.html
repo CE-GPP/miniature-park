@@ -1,11 +1,13 @@
-<!-- https://github.com/danwild/wind-js-leaflet -->
-
 <!doctype html>
 <html>
 <head>
 	<title>WindJS (ESRI) Leaflet Demo</title>
 	<meta charset="utf-8">
 	<link href="Leaflet.Weather.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="/src/js/heatmap.js"></script>
+    <script src="/src/js/leaflet-heatmap.js"></script>
 </head>
 <body>
 
@@ -13,8 +15,8 @@
 
 <!--vendor-->
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-<link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.3/dist/leaflet.css" />
-<script src="https://npmcdn.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<!-- <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.3/dist/leaflet.css" />
+<script src="https://npmcdn.com/leaflet@1.0.3/dist/leaflet.js"></script> -->
 
 <!--wind-js-leaflet-->
 <link rel="stylesheet" href="/dist/wind-js-leaflet.css" />
@@ -23,9 +25,116 @@
 
 <!--demo-->
 <link rel="stylesheet" href="demo.css" />
-<script src="demo.js"></script>
+<!-- <script src="demo.js"></script> -->
 <script>
-	L.control.weather().addTo(map);
+	var map = L.map('map').setView([51.5442, 0.0159], 14);
+
+		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+  			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+		}).addTo(map);
+
+	
+		window.onload = async function() {
+
+			async function loadJSON (url) {
+  				const res = await fetch(url);
+  				return await res.json();
+			}
+
+
+  			var csv = await loadJSON ('https://raw.githubusercontent.com/Naomi1122/minipark/main/csvjson.json');
+  			console.log(csv)
+  			var testData = {
+	  			max: 200,
+	  			data: csv
+  			};
+  			heatmapLayer.setData(testData);
+		};
+		var baseLayer = L.tileLayer(
+  			'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+			maxZoom: 18
+  			}
+		);
+
+		var cfg = {
+  			// radius should be small ONLY if scaleRadius is true (or small radius is intended)
+  			"radius": 0.0007,
+  			"maxOpacity": .6, 
+  			// scales the radius based on map zoom
+  			"scaleRadius": true, 
+  			// if set to false the heatmap uses the global maximum for colorization
+  			// if activated: uses the data maximum within the current map boundaries 
+  			//   (there will always be a red spot with useLocalExtremas true)
+  			"useLocalExtrema": true,
+  			// which field name in your data represents the latitude - default "lat"
+ 			latField: 'Latitude',
+  			// which field name in your data represents the longitude - default "lng"
+  			lngField: 'Longitude',
+  			// which field name in your data represents the data value - default "value"
+  			valueField: 'Mediandown load speed'
+		};
+
+
+		var heatmapLayer = new HeatmapOverlay(cfg);
+
+
+// var map = new L.Map('map', {
+//   center: new L.LatLng(51.5442, 0.0159),
+//   zoom: 14,
+//   layers: [baseLayer, heatmapLayer]
+// });
+
+// heatmapLayer.setData(testData);
+
+// make accessible for debugging
+//layer = heatmapLayer;
+		var overlays = {"Clear": baseLayer, "Coverage": heatmapLayer};
+		var layerControl = L.control.layers(overlays, null, {collapsed:false}).addTo(map);
+
+// 	var map = L.map('map').setView([51.5442, 0.0159], 14);
+
+// L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+//     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+// }).addTo(map);
+
+// var baseLayer = L.tileLayer(
+//     'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+//       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+//       maxZoom: 18
+//     }
+//   );
+//   var overlays = {"Clear": baseLayer};
+//   var layerControl = L.control.layers(overlays, null, {collapsed:false}).addTo(map);
+
+		var handleError = function(err){
+    		console.log('handleError...');
+    		console.log(err);
+		};
+
+		WindJSLeaflet.init({
+			localMode: true,
+			map: map,
+			layerControl: layerControl,
+			useNearest: false,
+			timeISO: null,
+			nearestDaysLimit: 7,
+			displayValues: true,
+			displayOptions: {
+				displayPosition: 'bottomleft',
+				displayEmptyString: 'No wind data'
+			},
+			overlayName: 'wind',
+
+	//https://github.com/danwild/wind-js-server
+			pingUrl: 'http://localhost:7000/alive',
+			latestUrl: 'http://localhost:7000/latest',
+			nearestUrl: 'http://localhost:7000/nearest',
+			errorCallback: handleError
+		});
+
+
+		L.control.weather().addTo(map);
 </script>
 
 
