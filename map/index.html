@@ -37,18 +37,23 @@
     <div id="map"></div>
 
     <style>
-      .marker {
-        display: block;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        padding: 0;
+      .bike-marker {
+        background-image: url('images/bicycle.png');
+        background-size: cover;
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
+      }
+
+      .mapboxgl-popup {
+        top: -10px;
       }
     </style>
 
     <script>
       mapboxgl.accessToken =
         "pk.eyJ1Ijoid2V6cGV6IiwiYSI6ImNsZGl2b2t0NjB0a2czdmwxbGZoNDV6ZGEifQ.QC9rt5n-bnHCZp5elt24pg";
+
       const map = new mapboxgl.Map({
         container: "map", // container ID
         // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
@@ -115,7 +120,6 @@
               maxZoom: 15,         // Maximum zoom of DEM tile set
               getSourceUrl: ({ x, y, z }) => {
                 // return DEM tile url for given x,y,z coordinates
-                console.log(`https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`)
                 return `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`
               },
               getElevation: ({ r, g, b, a }) => {
@@ -136,7 +140,6 @@
       });
 
       loadBikes();
-      //renderShadows();
     </script>
   </body>
 </html>

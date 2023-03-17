@@ -1,3 +1,5 @@
+var bikeMarkers = [];
+
 function loadBikes() {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
@@ -32,11 +34,24 @@ function addMarkers(xml) {
       var lat =
         x[i].getElementsByTagName("lat")[0].childNodes[0].nodeValue;
 
+      // create a HTML element for each feature
+      const el = document.createElement('div');
+      el.className = 'bike-marker';
+
       // Create a new marker.
-      const marker = new mapboxgl.Marker()
+      const marker = new mapboxgl.Marker(el)
         .setLngLat([long, lat])
         .addTo(map)
         .setPopup(popup);
+      
+      bikeMarkers.push(marker);
     }
   }
+}
+
+function removeBikes() {
+  bikeMarkers.forEach(bike => {
+    bike.remove();
+  });
+  bikeMarkers = [];
 }
