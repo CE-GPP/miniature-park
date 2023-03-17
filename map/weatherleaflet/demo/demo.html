@@ -20,17 +20,13 @@
     <link rel="stylesheet" href="OSMBuildings.css">
     <script src="OSMBuildings-Leaflet.debug.js"></script>
 	
-	<style>
-	#map {
-		height: 100vh;
-	}
-	</style>
+	
 </head>
 <body>
 
 <div id="map"></div>
 
-<!--vendor-->
+
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <!-- <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.3/dist/leaflet.css" />
 <script src="https://npmcdn.com/leaflet@1.0.3/dist/leaflet.js"></script> -->
@@ -38,7 +34,9 @@
 <!--wind-js-leaflet-->
 <link rel="stylesheet" href="/dist/wind-js-leaflet.css" />
 <script src="/dist/wind-js-leaflet.js"></script>
-<script src="Leaflet.Weather.js"></script>   
+<script src="Leaflet.Weather.js"></script>
+
+<script src="santanderBike.js"></script>
 
 <script>
 	var map = L.map('map', { zoomControl: false }).setView([51.5442, 0.0159], 15);
@@ -49,31 +47,7 @@
 			maxZoom: 18,
 		}).addTo(map);
 
-		/* ShadeMap setup */
-		const loaderEl = document.getElementById('loader');
-		let now = new Date();//1633358583454
-		const shadeMap = L.shadeMap({
-			apiKey: "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InVjZm5qYzBAdWNsLmFjLnVrIiwiY3JlYXRlZCI6MTY3OTAxODA4NTY0MSwiaWF0IjoxNjc5MDE4MDg1fQ.66vcSkdGAbCaAQPnuuTVBNc7rbpvTSmL9x-hK7fFtBw",
-			date: now,
-			color: '#01112f',
-			opacity: 0.7,
-			terrainSource: {
-				maxZoom: 16,
-				tileSize: 256,
-				getSourceUrl: ({ x, y, z }) => `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`,
-				getElevation: ({ r, g, b, a }) => (r * 256 + g + b / 256) - 32768,
-			},
-			debug: (msg) => { console.log(new Date().toISOString(), msg) }
-		}).addTo(map);
-
-		// shadeMap.on('tileloaded', (loadedTiles, totalTiles) => {
-		// 	loaderEl.innerText = `Loading: ${(loadedTiles / totalTiles * 100).toFixed(0)}%`;
-		// });
-
-		//shadeMap.setDate(new Date(Date.now() + 1000 * 60 * 60)); 
 		
-		/* End ShadeMap setup */
-
 		window.onload = async function() {
 
 			async function loadJSON (url) {
@@ -104,12 +78,11 @@
         }
     	);
 		var baseLayer = {
-        "Satellite": Esri_WorldImagery,
-        "Grey Canvas": Esri_DarkGreyCanvas
+        "Satellite": Esri_WorldImagery, "Grey Canvas": Esri_DarkGreyCanvas
     	};
 
 		const osmb = new OSMBuildings();
-  		osmb.addTo(map);
+  		//osmb.addTo(map);
 
   		// osmb.load('https://{s}-data.3dbuildings.com/tile/{z}/{x}/{y}.json?token=xsthpfc');
   		osmb.load();
@@ -152,8 +125,9 @@
 
 // make accessible for debugging
 //layer = heatmapLayer;
-		var overlays = {"Satellite": Esri_WorldImagery, "Grey Canvas": Esri_DarkGreyCanvas, "Coverage": heatmapLayer, "Buildings": osmb, "Shade": shadeMap};
-		var layerControl = L.control.layers(overlays, null, {collapsed:false}).addTo(map);
+		var layerControl = L.control.layers(baseLayer, null, {collapsed:false}).addTo(map);
+		layerControl.addOverlay(heatmapLayer, "Coverage");
+		layerControl.addOverlay(osmb, "Buildings");
 
 // 	var map = L.map('map').setView([51.5442, 0.0159], 14);
 
@@ -187,7 +161,7 @@
 				displayPosition: 'bottomleft',
 				displayEmptyString: 'No wind data'
 			},
-			overlayName: 'wind',
+			overlayName: 'Wind',
 
 	//https://github.com/danwild/wind-js-server
 			// pingUrl: 'http://localhost:7000/alive',
@@ -204,7 +178,36 @@
   			// layerControl.onclick = function() {
      		// $('.leaflet-control-weather').show();
   			// }
-	
+		
+		/* ShadeMap setup */
+		//const loaderEl = document.getElementById('loader');
+		let now = new Date();//1633358583454
+		const shadeMap = L.shadeMap({
+			apiKey: "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InVjZm5qYzBAdWNsLmFjLnVrIiwiY3JlYXRlZCI6MTY3OTAxODA4NTY0MSwiaWF0IjoxNjc5MDE4MDg1fQ.66vcSkdGAbCaAQPnuuTVBNc7rbpvTSmL9x-hK7fFtBw",
+			date: now,
+			color: '#01112f',
+			opacity: 0.7,
+			terrainSource: {
+				maxZoom: 16,
+				tileSize: 256,
+				getSourceUrl: ({ x, y, z }) => `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`,
+				getElevation: ({ r, g, b, a }) => (r * 256 + g + b / 256) - 32768,
+			},
+			debug: (msg) => { console.log(new Date().toISOString(), msg) }
+		}).addTo(map);
+
+		// shadeMap.on('tileloaded', (loadedTiles, totalTiles) => {
+		// 	loaderEl.innerText = `Loading: ${(loadedTiles / totalTiles * 100).toFixed(0)}%`;
+		// });
+
+		shadeMap.setDate(new Date(Date.now() + 1000 * 60 * 60));
+		layerControl.addOverlay(shadeMap, "Shade");
+		
+		/* End ShadeMap setup */
+		
+
+		loadBikes();
+		// layerControl.addOverlay(markerLayer, "Bike Stations");
 
 		
   		
