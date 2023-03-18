@@ -82,6 +82,7 @@
     	};
 
 		const osmb = new OSMBuildings();
+		console.log(typeof osmb);
   		//osmb.addTo(map);
 
   		// osmb.load('https://{s}-data.3dbuildings.com/tile/{z}/{x}/{y}.json?token=xsthpfc');
@@ -196,21 +197,29 @@
 			debug: (msg) => { console.log(new Date().toISOString(), msg) }
 		}).addTo(map);
 
-		// shadeMap.on('tileloaded', (loadedTiles, totalTiles) => {
-		// 	loaderEl.innerText = `Loading: ${(loadedTiles / totalTiles * 100).toFixed(0)}%`;
-		// });
+		shadeMap.on('tileloaded', (loadedTiles, totalTiles) => {
+			loaderEl.innerText = `Loading: ${(loadedTiles / totalTiles * 100).toFixed(0)}%`;
+		});
 
 		shadeMap.setDate(new Date(Date.now() + 1000 * 60 * 60));
 		layerControl.addOverlay(shadeMap, "Shade");
 		
 		/* End ShadeMap setup */
 		
-
+		var markerLayer = L.layerGroup();
 		loadBikes();
-		// layerControl.addOverlay(markerLayer, "Bike Stations");
-
+		layerControl.addOverlay(markerLayer, "Bike Stations");
 		
-  		
+		
+  		controlJson = [{Covergae: "false", buildings: "true", Shade: "true", Bike: "true", wind: "true"}];
+			for (var i = 0; i<= controlJson.length; i++){
+				for(var key in controlJson[i]){
+					if(controlJson[i][key] === "true"){
+						console.log(controlJson[i]);
+					}
+					//value.addTo(map);
+				}
+			}
 </script>
 
 
