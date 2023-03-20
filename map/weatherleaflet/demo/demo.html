@@ -19,6 +19,7 @@
 	<script src="leaflet-shadow-simulator.umd.min.js"></script>
     <link rel="stylesheet" href="OSMBuildings.css">
     <script src="OSMBuildings-Leaflet.debug.js"></script>
+	<script src="smoothWheelZoom.js"></script>
 	<!-- <script src="mqtt.js" type="module"></script> -->
 	
 	
@@ -43,7 +44,12 @@
 <script src="santanderBike.js"></script>
 
 <script>
-	var map = L.map('map', { zoomControl: false }).setView([51.5442, 0.0159], 15);
+	var map = L.map('map', { zoomControl: false, 
+						scrollWheelZoom: false,
+        				smoothWheelZoom: true,
+        				smoothSensitivity: 1,
+					}).setView([51.5442, 0.0159], 15);
+	map.scrollWheelZoom = true;
 
 	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 			attribution:
@@ -90,8 +96,8 @@
 		const osmb = new OSMBuildings();
   		//osmb.addTo(map);
 
-  		// osmb.load('https://{s}-data.3dbuildings.com/tile/{z}/{x}/{y}.json?token=xsthpfc');
-  		osmb.load();
+  		osmb.load('https://{s}-data.3dbuildings.com/tile/{z}/{x}/{y}.json?token=xsthpfc');
+  		//osmb.load();
 		
 
 		var cfg = {
@@ -139,7 +145,7 @@
     			},
     			data: datav,
     			maxVelocity: 15
-  			}).addTo(map);
+  			});
 
   			layerControl.addOverlay(velocityLayer, "Wind - Global");
 
@@ -151,7 +157,7 @@
 		/* ShadeMap setup */
 		const loaderEl = document.getElementById('loader');
 		let now = new Date();//1633358583454
-		const shadeMap = L.shadeMap({
+		var shadeMap = L.shadeMap({
 			apiKey: "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImouY2hlMThAeWFob28uY29tIiwiY3JlYXRlZCI6MTY3OTMyNTE1OTk3MywiaWF0IjoxNjc5MzI1MTU5fQ.5WjgkL9uyi7L1tmEtdBvw_tu4r-BTElt-KfPyR9oQQk",
 			date: now,
 			color: '#01112f',
@@ -162,18 +168,11 @@
 				getSourceUrl: ({ x, y, z }) => `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`,
 				getElevation: ({ r, g, b, a }) => (r * 256 + g + b / 256) - 32768,
 			},
-			getFeatures: async () => {
-					await mapLoaded(map);
-					const buildingData = map.querySourceFeatures('composite', { sourceLayer: 'building' }).filter((feature) => {
-						return feature.properties && feature.properties.underground !== "true" && (feature.properties.height || feature.properties.render_height)
-					});
-					return buildingData;
-				},
 			debug: (msg) => { console.log(new Date().toISOString(), msg) }
-		}).addTo(map);
+		});
 
 		shadeMap.on('tileloaded', (loadedTiles, totalTiles) => {
-			loaderEl.innerText = `Loading: ${(loadedTiles / totalTiles * 100).toFixed(0)}%`;
+			//loaderEl.innerText = `Loading: ${(loadedTiles / totalTiles * 100).toFixed(0)}%`;
 		});
 
 		shadeMap.setDate(new Date(Date.now() + 1000 * 60 * 60));
@@ -186,7 +185,7 @@
 		layerControl.addOverlay(markerLayer, "Bike Stations");
 		
 		// console.log(mqttResponse)
-  		controlJson = {Satellite: "false", GreyCanvas:"true", heatmapLayer: "false", osmb: "false", shadeMap: "false", markerLayer: "true", Wind: "true"};
+  		controlJson = {Satellite: "false", GreyCanvas:"false", heatmapLayer: "false", osmb: "false", shadeMap: "true", markerLayer: "false", Wind: "false"};
 		
 		//remove every layer
 		//map.removeLayer();
