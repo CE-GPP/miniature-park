@@ -19,7 +19,7 @@
 	<script src="leaflet-shadow-simulator.umd.min.js"></script>
     <link rel="stylesheet" href="OSMBuildings.css">
     <script src="OSMBuildings-Leaflet.debug.js"></script>
-	<script src="mqtt.js"></script>
+	<script src="mqtt.js" type="module"></script>
 	
 	
 </head>
@@ -39,9 +39,8 @@
 
 <script src="santanderBike.js"></script>
 
-<script>
+<script defer>
 	var map = L.map('map', { zoomControl: false }).setView([51.5442, 0.0159], 15);
-
 
 	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 			attribution:
@@ -212,13 +211,13 @@
 		loadBikes();
 		layerControl.addOverlay(markerLayer, "Bike Stations");
 		
-		
+		console.log(mqttResponse)
   		controlJson = {heatmapLayer: "false", osmb: "true", shadeMap: "true", markerLayer: "true", Wind: "true"};
 		
 		//remove every layer
 		//map.removeLayer();
-		for (var key of Object.keys(buttonReturn)) {
-			if (buttonReturn[key] === 'true'){
+		for (var key of Object.keys(mqttResponse)) {
+			if (mqttResponse[key] === 'true'){
 				switch(key){
 					case "heatmapLayer":
 						heatmapLayer.addTo(map)

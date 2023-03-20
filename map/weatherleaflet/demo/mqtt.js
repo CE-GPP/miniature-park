@@ -1,27 +1,33 @@
 // Require the MQTT library
-// const mqtt = require('mqtt');
-import mqtt from "mqtt";
+//const mqtt = require("mqtt");
+import {connect} from "mqtt";
+
 // Connect to the MQTT Broker
-const client = mqtt.connect('mqtt://mqtt.cetools.org', { //mqtt.cetools.org
-  // Set the username and password if your broker require authentication
-  username: 'student',
-  password: 'ce2021-mqtt-forget-whale',
-});
+const client = connect('mqtt://mqtt.cetools.org')
+
+var mqttResponse;
+
 // Subscribe to a topic
 client.on('connect', () => {
-  client.subscribe('student/ucfnnbx/QEOP/button', (error) => {
+  client.subscribe('student/ucfnnbx/QEOP/buttonReturn', (error) => {
     if (!error) {
-      console.log(`Subscribed to ${'<topic_name>'}`);
+      console.log("Subscribed")
+      // console.log(`Subscribed to ${topic_name}`);
     }
   });
 });
+
 // Handle incoming messages
-client.on('message', (topic, message) => {
-  // Convert the message buffer to a string
-  const payload = message.toString();
+client.on('message', function(topic, message) {
+  console.log(message.toString())// Convert the message buffer to a string
+  mqttResponse = message.toJSON
+  //client.end()
+  //console.log(`Received message`);
+
   // Do something with the payload
-  console.log(`Received message: ${payload} on topic: ${topic}`);
+
 });
+
 // Handle connection errors
 client.on('error', (error) => {
   console.log(`Error: ${error}`);
