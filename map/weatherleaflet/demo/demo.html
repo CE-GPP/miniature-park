@@ -19,6 +19,7 @@
 	<script src="leaflet-shadow-simulator.umd.min.js"></script>
     <link rel="stylesheet" href="OSMBuildings.css">
     <script src="OSMBuildings-Leaflet.debug.js"></script>
+	<script src="mqtt.js"></script>
 	
 	
 </head>
@@ -40,6 +41,7 @@
 
 <script>
 	var map = L.map('map', { zoomControl: false }).setView([51.5442, 0.0159], 15);
+
 
 	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 			attribution:
@@ -181,10 +183,10 @@
   			// }
 		
 		/* ShadeMap setup */
-		//const loaderEl = document.getElementById('loader');
+		const loaderEl = document.getElementById('loader');
 		let now = new Date();//1633358583454
 		const shadeMap = L.shadeMap({
-			apiKey: "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InVjZm5qYzBAdWNsLmFjLnVrIiwiY3JlYXRlZCI6MTY3OTAxODA4NTY0MSwiaWF0IjoxNjc5MDE4MDg1fQ.66vcSkdGAbCaAQPnuuTVBNc7rbpvTSmL9x-hK7fFtBw",
+			apiKey: "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImouY2hlMThAeWFob28uY29tIiwiY3JlYXRlZCI6MTY3OTMyNTE1OTk3MywiaWF0IjoxNjc5MzI1MTU5fQ.5WjgkL9uyi7L1tmEtdBvw_tu4r-BTElt-KfPyR9oQQk",
 			date: now,
 			color: '#01112f',
 			opacity: 0.7,
@@ -202,7 +204,7 @@
 		});
 
 		shadeMap.setDate(new Date(Date.now() + 1000 * 60 * 60));
-		layerControl.addOverlay(shadeMap, "Shade");
+		//layerControl.addOverlay(shadeMap, "Shade");
 		
 		/* End ShadeMap setup */
 		
@@ -211,15 +213,43 @@
 		layerControl.addOverlay(markerLayer, "Bike Stations");
 		
 		
-  		controlJson = [{Covergae: "false", buildings: "true", Shade: "true", Bike: "true", wind: "true"}];
-			for (var i = 0; i<= controlJson.length; i++){
+  		controlJson = {heatmapLayer: "false", osmb: "true", shadeMap: "true", markerLayer: "true", Wind: "true"};
+		
+		//remove every layer
+		//map.removeLayer();
+		for (var key of Object.keys(buttonReturn)) {
+			if (buttonReturn[key] === 'true'){
+				switch(key){
+					case "heatmapLayer":
+						heatmapLayer.addTo(map)
+						break;
+					case "osmb":
+						osmb.addTo(map)
+						break;
+						//the rest...
+					case "shadeMap":
+						shadeMap.addTo(map)
+						break;
+					case "markerLayer":
+						markerLayer.addTo(map)
+						break;
+					case "wind":
+						WindJSLeaflet.addTo(map)
+						break;	
+				}	
+			} 
+			//console.log(controlJson[key])
+		}
+		
+		/*
 				for(var key in controlJson[i]){
-					if(controlJson[i][key] === "true"){
+					if(controlJson[i][key] === true){
 						console.log(controlJson[i]);
 					}
 					//value.addTo(map);
 				}
-			}
+				*/
+			
 </script>
 
 
