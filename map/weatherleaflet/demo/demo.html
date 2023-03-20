@@ -7,8 +7,8 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
 
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
-	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 	<link href="Leaflet.Weather.css" rel="stylesheet" type="text/css" />
 	<!-- <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script> -->
@@ -19,7 +19,7 @@
 	<script src="leaflet-shadow-simulator.umd.min.js"></script>
     <link rel="stylesheet" href="OSMBuildings.css">
     <script src="OSMBuildings-Leaflet.debug.js"></script>
-	<script src="mqtt.js" type="module"></script>
+	<!-- <script src="mqtt.js" type="module"></script> -->
 	
 	
 </head>
@@ -32,14 +32,17 @@
 <!-- <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.3/dist/leaflet.css" />
 <script src="https://npmcdn.com/leaflet@1.0.3/dist/leaflet.js"></script> -->
 
-<!--wind-js-leaflet-->
-<link rel="stylesheet" href="../dist/wind-js-leaflet.css" />
-<script src="../dist/wind-js-leaflet.js"></script>
+
+<script src="/dist/leaflet-velocity.js"></script>
+
+<!--demo-->
+<!-- <link rel="stylesheet" href="demo.css" /> -->
+
 <script src="Leaflet.Weather.js"></script>
 
 <script src="santanderBike.js"></script>
 
-<script defer>
+<script>
 	var map = L.map('map', { zoomControl: false }).setView([51.5442, 0.0159], 15);
 
 	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -58,11 +61,13 @@
 
 
   			var csv = await loadJSON ('https://raw.githubusercontent.com/Naomi1122/minipark/main/csvjson.json');
-  			console.log(csv)
+			
+  			//console.log(csv)
   			var testData = {
 	  			max: 200,
 	  			data: csv
   			};
+
   			heatmapLayer.setData(testData);
 		};
 		var Esri_WorldImagery = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -83,17 +88,11 @@
     	};
 
 		const osmb = new OSMBuildings();
-		console.log(typeof osmb);
   		//osmb.addTo(map);
 
   		// osmb.load('https://{s}-data.3dbuildings.com/tile/{z}/{x}/{y}.json?token=xsthpfc');
   		osmb.load();
-		// var baseLayer = L.tileLayer(
-  		// 	'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-		// 	attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
-		// 	maxZoom: 18
-  		// 	}
-		// );
+		
 
 		var cfg = {
   			// radius should be small ONLY if scaleRadius is true (or small radius is intended)
@@ -117,69 +116,37 @@
 		var heatmapLayer = new HeatmapOverlay(cfg);
 
 
-// var map = new L.Map('map', {
-//   center: new L.LatLng(51.5442, 0.0159),
-//   zoom: 14,
-//   layers: [baseLayer, heatmapLayer]
-// });
-
-// heatmapLayer.setData(testData);
-
-// make accessible for debugging
-//layer = heatmapLayer;
 		var layerControl = L.control.layers(baseLayer, null, {collapsed:false}).addTo(map);
 		layerControl.addOverlay(heatmapLayer, "Coverage");
 		layerControl.addOverlay(osmb, "Buildings");
 
-// 	var map = L.map('map').setView([51.5442, 0.0159], 14);
+		var datav;
 
-// L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-//     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-// }).addTo(map);
+			$.ajaxSettings.async = false;
 
-// var baseLayer = L.tileLayer(
-//     'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-//       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
-//       maxZoom: 18
-//     }
-//   );
-//   var overlays = {"Clear": baseLayer};
-//   var layerControl = L.control.layers(overlays, null, {collapsed:false}).addTo(map);
+			$.getJSON("wind-global.json", function(data) {
+  				datav = data;
 
-		var handleError = function(err){
-    		console.log('handleError...');
-    		console.log(err);
-		};
-
-		WindJSLeaflet.init({
-			localMode: true,
-			map: map,
-			layerControl: layerControl,
-			useNearest: false,
-			timeISO: null,
-			nearestDaysLimit: 7,
-			displayValues: true,
-			displayOptions: {
-				displayPosition: 'bottomleft',
-				displayEmptyString: 'No wind data'
-			},
-			overlayName: 'Wind',
-
-	//https://github.com/danwild/wind-js-server
-			// pingUrl: 'http://localhost:7000/alive',
-			// latestUrl: 'http://localhost:7000/latest',
-			// nearestUrl: 'http://localhost:7000/nearest',
-			errorCallback: handleError
 		});
+		$.ajaxSettings.async = true;
+			
+		var velocityLayer = L.velocityLayer({
+    			displayValues: true,
+    			displayOptions: {
+      			velocityType: "Global Wind",
+      			position: "bottomleft",
+      			emptyString: "No wind data"
+    			},
+    			data: datav,
+    			maxVelocity: 15
+  			}).addTo(map);
 
+  			layerControl.addOverlay(velocityLayer, "Wind - Global");
 
 		var weatherControl = new L.Control.Weather();
 		// if (!(map.hasLayer(Esri_DarkGreyCanvas)))
 		map.addControl(weatherControl);
-			// $('.leaflet-control-weather').hide();
-  			// layerControl.onclick = function() {
-     		// $('.leaflet-control-weather').show();
-  			// }
+
 		
 		/* ShadeMap setup */
 		const loaderEl = document.getElementById('loader');
@@ -190,11 +157,18 @@
 			color: '#01112f',
 			opacity: 0.7,
 			terrainSource: {
-				maxZoom: 16,
+				maxZoom: 15,
 				tileSize: 256,
 				getSourceUrl: ({ x, y, z }) => `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`,
 				getElevation: ({ r, g, b, a }) => (r * 256 + g + b / 256) - 32768,
 			},
+			getFeatures: async () => {
+					await mapLoaded(map);
+					const buildingData = map.querySourceFeatures('composite', { sourceLayer: 'building' }).filter((feature) => {
+						return feature.properties && feature.properties.underground !== "true" && (feature.properties.height || feature.properties.render_height)
+					});
+					return buildingData;
+				},
 			debug: (msg) => { console.log(new Date().toISOString(), msg) }
 		}).addTo(map);
 
@@ -211,43 +185,39 @@
 		loadBikes();
 		layerControl.addOverlay(markerLayer, "Bike Stations");
 		
-		console.log(mqttResponse)
-  		controlJson = {heatmapLayer: "false", osmb: "true", shadeMap: "true", markerLayer: "true", Wind: "true"};
+		// console.log(mqttResponse)
+  		controlJson = {Satellite: "false", GreyCanvas:"true", heatmapLayer: "false", osmb: "false", shadeMap: "false", markerLayer: "true", Wind: "true"};
 		
 		//remove every layer
 		//map.removeLayer();
-		for (var key of Object.keys(mqttResponse)) {
-			if (mqttResponse[key] === 'true'){
+		for (var key of Object.keys(controlJson)) {
+			if (controlJson[key] === 'true'){
 				switch(key){
+					case "Satellite":
+						Esri_WorldImagery.addTo(map)
+						break;
+					case "GreyCanvas":
+						Esri_DarkGreyCanvas.addTo(map)
+						break;
 					case "heatmapLayer":
 						heatmapLayer.addTo(map)
 						break;
 					case "osmb":
 						osmb.addTo(map)
 						break;
-						//the rest...
 					case "shadeMap":
 						shadeMap.addTo(map)
 						break;
 					case "markerLayer":
 						markerLayer.addTo(map)
 						break;
-					case "wind":
-						WindJSLeaflet.addTo(map)
+					case "Wind":
+					    velocityLayer.addTo(map)
 						break;	
 				}	
 			} 
-			//console.log(controlJson[key])
 		}
-		
-		/*
-				for(var key in controlJson[i]){
-					if(controlJson[i][key] === true){
-						console.log(controlJson[i]);
-					}
-					//value.addTo(map);
-				}
-				*/
+
 			
 </script>
 

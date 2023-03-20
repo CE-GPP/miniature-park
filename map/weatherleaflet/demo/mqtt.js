@@ -1,6 +1,6 @@
 // Require the MQTT library
-//const mqtt = require("mqtt");
-import {connect} from "mqtt";
+const mqtt = require("mqtt");
+//import {connect} from "mqtt";
 
 // Connect to the MQTT Broker
 const client = connect('mqtt://mqtt.cetools.org')

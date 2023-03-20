@@ -36,8 +36,22 @@ function loadBikes() {
           //var markerLayer = L.layerGroup();
   
         // Create a new marker.
-        var marker = new L.marker([lat, long]).bindPopup(nbBikes).addTo(markerLayer)
-        marker.openPopup();
+        var bikeIcon = new L.Icon({
+          iconUrl: 'bicycle.png',
+          iconSize:    [50, 50],
+          popupAnchor:  [0, -12]
+      })
+
+        var p = new L.Popup({ autoClose: false, closeOnClick: false })
+                .setContent(nbBikes)
+                .setLatLng([lat, long])
+                .addTo(markerLayer);
+        var marker = L.marker([lat, long], {icon: bikeIcon})
+                .bindPopup(p)
+                .addTo(markerLayer)
+                .openPopup();
+        // var marker = new L.marker([lat, long]).bindPopup(nbBikes).addTo(markerLayer)
+        // marker.openPopup();
       }
     }
   }
