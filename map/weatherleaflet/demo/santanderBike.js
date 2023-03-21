@@ -1,8 +1,8 @@
-function loadBikes() {
+function loadBikes(markerLayer) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
-        addMarkers(this);
+        addMarkers(this, markerLayer);
       }
     };
     xhttp.open(
@@ -13,7 +13,7 @@ function loadBikes() {
   }
 
   
-  function addMarkers(xml) {
+  function addMarkers(xml, markerLayer) {
     var i;
     var xmlDoc = xml.responseXML;
     var x = xmlDoc.getElementsByTagName("station");
@@ -33,7 +33,7 @@ function loadBikes() {
         var lat =
           x[i].getElementsByTagName("lat")[0].childNodes[0].nodeValue;
         
-          //var markerLayer = L.layerGroup();
+        //var markerLayer = L.layerGroup();
   
         // Create a new marker.
         var bikeIcon = new L.Icon({
@@ -50,8 +50,8 @@ function loadBikes() {
                 .bindPopup(p)
                 .addTo(markerLayer)
                 .openPopup();
-        // var marker = new L.marker([lat, long]).bindPopup(nbBikes).addTo(markerLayer)
-        // marker.openPopup();
+        //var marker = new L.marker([lat, long]).bindPopup(nbBikes).addTo(markerLayer)
+        //marker.openPopup();
       }
     }
   }

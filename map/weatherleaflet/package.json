@@ -28,7 +28,14 @@
     "url": "https://github.com/onaci/leaflet-velocity/issues"
   },
   "homepage": "https://github.com/onaci/leaflet-velocity#readme",
-  "dependencies": {},
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mqtt": "^4.3.7",
+    "socket.io": "^4.6.1",
+    "socket.io-client": "^4.6.1",
+    "stock.io": "^0.0.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.5.4",
     "@babel/preset-env": "^7.5.4",

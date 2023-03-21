@@ -16,7 +16,7 @@
     <script src="leaflet-heatmap.js"></script>
 
 	<script src='https://www.unpkg.com/suncalc@1.9.0/suncalc.js'></script>
-	<script src="leaflet-shadow-simulator.umd.min.js"></script>
+	<script src="https://unpkg.com/leaflet-shadow-simulator/dist/leaflet-shadow-simulator.umd.min.js"></script>
     <link rel="stylesheet" href="OSMBuildings.css">
     <script src="OSMBuildings-Leaflet.debug.js"></script>
 	<script src="smoothWheelZoom.js"></script>
@@ -43,7 +43,7 @@
 
 <script src="santanderBike.js"></script>
 
-<script>
+<script type="module"> //type="module"
 	var map = L.map('map', { zoomControl: false, 
 						scrollWheelZoom: false,
         				smoothWheelZoom: true,
@@ -76,10 +76,10 @@
 
   			heatmapLayer.setData(testData);
 		};
-		var Esri_WorldImagery = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
-			maxZoom: 18
-  			});
+		var OpenstreetMap = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+			attribution:
+				'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+		});
 		var Esri_DarkGreyCanvas = L.tileLayer(
         "http://{s}.sm.mapstack.stamen.com/" +
         "(toner-lite,$fff[difference],$fff[@23],$fff[hsl-saturation@20])/" +
@@ -90,7 +90,7 @@
         }
     	);
 		var baseLayer = {
-        "Satellite": Esri_WorldImagery, "Grey Canvas": Esri_DarkGreyCanvas
+        "Satellite": OpenstreetMap, "Grey Canvas": Esri_DarkGreyCanvas
     	};
 
 		const osmb = new OSMBuildings();
@@ -151,13 +151,15 @@
 
 		var weatherControl = new L.Control.Weather();
 		// if (!(map.hasLayer(Esri_DarkGreyCanvas)))
-		map.addControl(weatherControl);
+		//map.addControl(weatherControl);
 
 		
 		/* ShadeMap setup */
+		//var date = new Date(); // Or the date you'd like converted.
+		//var isoDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
 		const loaderEl = document.getElementById('loader');
 		let now = new Date();//1633358583454
-		var shadeMap = L.shadeMap({
+		var shadeMap1 = L.shadeMap({
 			apiKey: "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImouY2hlMThAeWFob28uY29tIiwiY3JlYXRlZCI6MTY3OTMyNTE1OTk3MywiaWF0IjoxNjc5MzI1MTU5fQ.5WjgkL9uyi7L1tmEtdBvw_tu4r-BTElt-KfPyR9oQQk",
 			date: now,
 			color: '#01112f',
@@ -171,53 +173,152 @@
 			debug: (msg) => { console.log(new Date().toISOString(), msg) }
 		});
 
-		shadeMap.on('tileloaded', (loadedTiles, totalTiles) => {
+		shadeMap1.on('tileloaded', (loadedTiles, totalTiles) => {
 			//loaderEl.innerText = `Loading: ${(loadedTiles / totalTiles * 100).toFixed(0)}%`;
 		});
 
-		shadeMap.setDate(new Date(Date.now() + 1000 * 60 * 60));
+		shadeMap1.setDate(new Date(Date.now() )); 
+		//shadeMap.setDate(new Date(isoDateTime + 6000 * 60 * 60)); //+ 1000 * 60 * 60
+		//console.log(date);
 		//layerControl.addOverlay(shadeMap, "Shade");
-		
+		//console.log("shade removed")
+		// console.log(getMethods(shadeMap1).join("\n \n"));
+		//console.log(shadeMap1.setOpacity(0.7))
+		// function getMethods(obj) {
+		// 	var result = [];
+		// 	for (var id in obj) {
+		// 		try {
+		// 		if (typeof(obj[id]) == "function") {
+		// 			result.push(id + ": " + obj[id].toString());
+		// 		}
+		// 		} catch (err) {
+		// 		result.push(id + ": inaccessible");
+		// 		}
+		// 	}
+		// 	return result;
+		// 	}
+
+
 		/* End ShadeMap setup */
+		//loadBikes();
 		
 		var markerLayer = L.layerGroup();
-		loadBikes();
+		//console.log(markerLayer);
+		loadBikes(markerLayer);
 		layerControl.addOverlay(markerLayer, "Bike Stations");
 		
-		// console.log(mqttResponse)
-  		controlJson = {Satellite: "false", GreyCanvas:"false", heatmapLayer: "false", osmb: "false", shadeMap: "true", markerLayer: "false", Wind: "false"};
-		
-		//remove every layer
-		//map.removeLayer();
-		for (var key of Object.keys(controlJson)) {
-			if (controlJson[key] === 'true'){
-				switch(key){
-					case "Satellite":
-						Esri_WorldImagery.addTo(map)
-						break;
-					case "GreyCanvas":
-						Esri_DarkGreyCanvas.addTo(map)
-						break;
-					case "heatmapLayer":
-						heatmapLayer.addTo(map)
-						break;
-					case "osmb":
-						osmb.addTo(map)
-						break;
-					case "shadeMap":
-						shadeMap.addTo(map)
-						break;
-					case "markerLayer":
-						markerLayer.addTo(map)
-						break;
-					case "Wind":
-					    velocityLayer.addTo(map)
-						break;	
-				}	
-			} 
+	var base = "";
+    var over = "";
+    var result;
+	console.log("Hello")
+    async function fetchLatestMessage() {
+        await fetch("http://localhost:3000/latest-message")
+        .then(response => {
+            return response.json();
+        })
+        .then(({topic, message}) => {
+            //console.log(message)
+          if (topic && message) {
+            if (topic == 'student/ucfnimx/QEOPMap/style'){
+                base = message;
+                //console.log(base)
+                // return base;
+            }else{
+                over = message
+            }
+          }
+        })
+    }
+
+    await setInterval(async function() { 
+		await fetchLatestMessage();
+		console.log("result is:")
+    	// console.log(base);
+		if(base !== ""){
+			for (var key of Object.keys(base)) {
+				if (base[key] === true){
+					//console.log(key)
+					switch(key){
+						case "Satellite":
+							//Esri_DarkGreyCanvas.remove()
+							OpenstreetMap.addTo(map)
+							break;
+						case "Grey":
+							//OpenstreetMap.remove()
+							console.log(base);
+							Esri_DarkGreyCanvas.addTo(map)
+							//console.log(map)
+							break;
+						
+					}	
+				}else if(base[key] === false){
+					switch(key){
+						case "Satellite":
+							OpenstreetMap.remove()
+							break;
+						case "Grey":
+							Esri_DarkGreyCanvas.remove()
+							break;
+						
+					}
+				} 
+			}
+			base = ""
+		}else if(over !== ""){
+			for (var key of Object.keys(over)) {
+					if (over[key] === true){
+						console.log(key);
+						switch(key){
+							case "weather":
+								map.addControl(weatherControl)
+								break;
+							case "heatmapLayer":
+								heatmapLayer.addTo(map)
+								break;
+							case "osmb":
+								osmb.addTo(map)
+								break;
+							case "shadeMap":
+								shadeMap1.addTo(map);
+								shadeMap1.setOpacity(0.7);
+								break;
+							case "markerLayer":
+								markerLayer.addTo(map)
+								break;
+							case "Wind":
+								velocityLayer.addTo(map)
+								break;	
+						}	
+					}else if(over[key] === false){
+						switch(key){
+							case "weather":
+								weatherControl.remove()
+								break;
+							case "heatmapLayer":
+								heatmapLayer.remove()
+								break;
+							case "osmb":
+								osmb.remove()
+								break;
+							case "shadeMap":
+								shadeMap1.setOpacity(0);
+								break;
+							case "markerLayer":
+								markerLayer.remove()
+								break;
+							case "Wind":
+								velocityLayer.remove()
+								break;	
+						}	
+					} 
+				}
+				over = ""
 		}
 
-			
+		
+	}, 2000);
+
+	
 </script>
 
 

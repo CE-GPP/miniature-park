@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MQTT Messages</title>
+  <style>
+    #messages {
+      max-height: 400px;
+      overflow-y: scroll;
+    }
+  </style>
+</head>
+<body>
+  <h1>MQTT Messages</h1>
+  <div id="messages"></div>
+  <script type="module">
+    var base;
+    var over;
+    var result;
+    const messagesDiv = document.getElementById("messages");
+    async function fetchLatestMessage() {
+        await fetch("http://localhost:3000/latest-message")
+        .then(response => {
+            return response.json();
+        })
+        .then(({topic, message}) => {
+            //console.log(message)
+          if (topic && message) {
+            if (topic == 'student/ucfnimx/QEOPMap/style'){
+                base = message;
+                console.log(base)
+                // return base;
+            }else{
+                msg = message
+            }
+          }
+        })
+    }
+    await fetchLatestMessage();
+    console.log("result is:")
+    console.log(base);
+    // setTimeout(fetchLatestMessage, 2000);
+  </script>
+</body>
+</html>
