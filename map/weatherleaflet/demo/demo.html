@@ -34,7 +34,7 @@
 <script src="https://npmcdn.com/leaflet@1.0.3/dist/leaflet.js"></script> -->
 
 
-<script src="/dist/leaflet-velocity.js"></script>
+<script src="../dist/leaflet-velocity.js"></script>
 
 <!--demo-->
 <!-- <link rel="stylesheet" href="demo.css" /> -->
@@ -48,7 +48,7 @@
 						scrollWheelZoom: false,
         				smoothWheelZoom: true,
         				smoothSensitivity: 1,
-					}).setView([51.5442, 0.0159], 15);
+					}).setView([51.5442, 0.0159], 16.5);
 	map.scrollWheelZoom = true;
 
 	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -102,8 +102,8 @@
 
 		var cfg = {
   			// radius should be small ONLY if scaleRadius is true (or small radius is intended)
-  			"radius": 0.0007,
-  			"maxOpacity": .65, 
+  			"radius": 0.001,
+  			"maxOpacity": .8, 
   			// scales the radius based on map zoom
   			"scaleRadius": true, 
   			// if set to false the heatmap uses the global maximum for colorization

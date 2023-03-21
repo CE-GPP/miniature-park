@@ -39,7 +39,8 @@ function loadBikes(markerLayer) {
         var bikeIcon = new L.Icon({
           iconUrl: 'bicycle.png',
           iconSize:    [50, 50],
-          popupAnchor:  [0, -12]
+          popupAnchor:  [0, -12],
+          iconAnchor: [25,50]
       })
 
         var p = new L.Popup({ autoClose: false, closeOnClick: false })

@@ -1,6 +1,6 @@
 L.Control.Weather = L.Control.extend({
   options: {
-    position: "bottomleft",
+    position: "bottomright",
     units: "internal",
     lang: "en",
     event: "moveend",
