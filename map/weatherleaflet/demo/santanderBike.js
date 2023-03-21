@@ -11,6 +11,7 @@ function loadBikes() {
     );
     xhttp.send();
   }
+
   
   function addMarkers(xml) {
     var i;
@@ -25,18 +26,32 @@ function loadBikes() {
       if (ids.includes(currentID)) {
         var nbBikes =
           x[i].getElementsByTagName("nbBikes")[0].childNodes[0].nodeValue;
-        var popup = new L.popup().setContent(nbBikes);
+        var popup = new L.popup().setPopupContent(nbBikes);
   
         var long =
           x[i].getElementsByTagName("long")[0].childNodes[0].nodeValue;
         var lat =
           x[i].getElementsByTagName("lat")[0].childNodes[0].nodeValue;
-
-        var markerLayer = L.layerGroup();
+        
+          //var markerLayer = L.layerGroup();
   
         // Create a new marker.
-        var marker = new L.marker([lat, long]).bindPopup(nbBikes).addTo(map)
-        marker.openPopup();
+        var bikeIcon = new L.Icon({
+          iconUrl: 'bicycle.png',
+          iconSize:    [50, 50],
+          popupAnchor:  [0, -12]
+      })
+
+        var p = new L.Popup({ autoClose: false, closeOnClick: false })
+                .setContent(nbBikes)
+                .setLatLng([lat, long])
+                .addTo(markerLayer);
+        var marker = L.marker([lat, long], {icon: bikeIcon})
+                .bindPopup(p)
+                .addTo(markerLayer)
+                .openPopup();
+        // var marker = new L.marker([lat, long]).bindPopup(nbBikes).addTo(markerLayer)
+        // marker.openPopup();
       }
     }
   }
