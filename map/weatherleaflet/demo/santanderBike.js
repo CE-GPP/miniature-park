@@ -40,17 +40,19 @@ function loadBikes(markerLayer) {
           iconUrl: 'bicycle.png',
           iconSize:    [50, 50],
           popupAnchor:  [0, -12],
-          iconAnchor: [25,50]
+          //iconAnchor: [25,50]
       })
 
         var p = new L.Popup({ autoClose: false, closeOnClick: false })
                 .setContent(nbBikes)
                 .setLatLng([lat, long])
-                .addTo(markerLayer);
+                //.addTo(markerLayer);
+                markerLayer.addLayer(p);        
         var marker = L.marker([lat, long], {icon: bikeIcon})
                 .bindPopup(p)
-                .addTo(markerLayer)
+                //.addTo(markerLayer)
                 .openPopup();
+                markerLayer.addLayer(marker);
         //var marker = new L.marker([lat, long]).bindPopup(nbBikes).addTo(markerLayer)
         //marker.openPopup();
       }
