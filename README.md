@@ -14,3 +14,10 @@ Data dashboards are typically designed by or for experts, focusing on functional
 - Integration of a 7-inch main display with HDMI support, a 1.9-inch sub-display with a custom UI for a dynamic data feed, and an EC11 rotary encoder for easy control.
 - Utilisation of a Raspberry Pi 4 for computing and displaying data, allowing for quick software development using Python and web-based frameworks.
 ## Contributors
+<!-- Copy-paste in your Readme.md file -->
+
+<a href = "https://github.com/Tanu-N-Prabhu/Python/graphs/contributors">
+  <img src = "https://contrib.rocks/image?repo = CE-GPP/miniature-park"/>
+</a>
+
+Made with [contributors-img](https://contrib.rocks).
