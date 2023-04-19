@@ -48,8 +48,9 @@
 						scrollWheelZoom: false,
         				smoothWheelZoom: true,
         				smoothSensitivity: 1,
-						maxBounds: L.latLngBounds([51.5441, 0.01589], [51.5443, 0.01591])
-					}).setView([51.5442, 0.0159], 16.5);
+						maxBounds: L.latLngBounds([51.542, -0.020], [51.542, -0.020]),
+						dragging: false
+					}).setView([51.542, -0.020], 16.5);
 	map.scrollWheelZoom = true;
 
 	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -150,7 +151,7 @@
 
   			layerControl.addOverlay(velocityLayer, "Wind - Global");
 
-		var weatherControl = new L.Control.Weather();
+		var weatherControl = new L.Control.Weather().addTo(map);
 		// if (!(map.hasLayer(Esri_DarkGreyCanvas)))
 		//map.addControl(weatherControl);
 
@@ -172,13 +173,13 @@
 				getElevation: ({ r, g, b, a }) => (r * 256 + g + b / 256) - 32768,
 			},
 			debug: (msg) => { console.log(new Date().toISOString(), msg) }
-		});
+		}).addTo(map);
 
 		shadeMap1.on('tileloaded', (loadedTiles, totalTiles) => {
 			//loaderEl.innerText = `Loading: ${(loadedTiles / totalTiles * 100).toFixed(0)}%`;
 		});
 
-		shadeMap1.setDate(new Date(Date.now() )); 
+		shadeMap1.setDate(new Date(Date.now()+ (1000 * 60 * 60) )); 
 		//shadeMap.setDate(new Date(isoDateTime + 6000 * 60 * 60)); //+ 1000 * 60 * 60
 		//console.log(date);
 		//layerControl.addOverlay(shadeMap, "Shade");
