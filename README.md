@@ -8,6 +8,8 @@ As in the figure below, users can select map layers of the web application to di
 ![image](https://user-images.githubusercontent.com/113748901/233206572-ab0d264d-6618-42f9-8509-b4edd7c591ec.png)
 ## What can this help with?
 Data dashboards are typically designed by or for experts, focusing on functionality over aesthetics. This can be limiting for general users who seek accessible and appealing ways to access real-time information. Moreover, there is a lack of devices that combine practicality with sophisticated design. This project addresses these gaps by creating a data dashboard that is visually appealing and user-friendly, targeting general users rather than experts.
+## Application architecture
+![image](https://user-images.githubusercontent.com/113748901/233217600-c512cb57-5a8b-4e61-9de1-1b228f46bd21.png)
 ## Development procedures
 - Design and development of a transparent 3D printed model in Blender.
 - Creation of a wooden enclosure using laser cutting and wood stain to achieve a classic oak appearance.
