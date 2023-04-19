@@ -6,6 +6,9 @@ This project develops a miniature version of the Queen Elizabeth Olympic Park (Q
 As in the figure below, users can select map layers of the web application to display with a button, and look through the transparent 3D model to see the information.
 
 ![image](https://user-images.githubusercontent.com/113748901/233206572-ab0d264d-6618-42f9-8509-b4edd7c591ec.png)
+## Background & Problem Statement
+Data dashboards are typically designed by or for experts, focusing on functionality over aesthetics. This can be limiting for general users who seek accessible and appealing ways to access real-time information. Moreover, there is a lack of devices that combine practicality with sophisticated design. This project addresses these gaps by creating a data dashboard that is visually appealing and user-friendly, targeting general users rather than experts.
+
 ## Procedures
 - Design and development of a transparent 3D printed map that provides an intuitive user experience and aesthetic appeal.
 - Creation of a wooden enclosure using laser cutting and wood stain to achieve a classic oak appearance.
