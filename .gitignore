@@ -1,7 +1,7 @@
 
 .DS_Store
 *.bak
-device/controls/QEOP/secrete.txt
+/Users/dylim/Documents/CASA/CE/miniature-park/device/controls/secrete.txt
 
 # Logs
 logs
