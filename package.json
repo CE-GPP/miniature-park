@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "mapbox-gl-shadow-simulator": "^0.22.2"
-  },
-  "type": "module"
-}
